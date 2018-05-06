@@ -9,3 +9,137 @@ in do post
 Leader Started
 Leader Started
 Leader Started
+Leader Started
+Leader Started
+Members List:
+[ localhost:8081, Leader: true, Next Index:  0]
+
+Leader Started
+Members List:
+[ localhost:8081, Leader: true, Next Index:  0]
+
+Leader Started
+Members List:
+[ localhost:8081, Leader: true, Next Index:  0]
+
+Leader Started
+Members List:
+[ localhost:8081, Leader: true, Next Index:  0]
+
+Leader Started
+Members List:
+[ localhost:8081, Leader: true, Next Index:  0]
+
+Leader Started
+Members List:
+[ localhost:8081, Leader: true, Next Index:  0]
+
+
+New localhost:8082
+Members sent
+
+New localhost:8083
+Members sent
+Replication started
+1
+ replica channel size 2
+Leader Started
+Members List:
+[ localhost:8081, Leader: true, Next Index:  0]
+
+
+New localhost:8082
+Members sent
+
+New localhost:8083
+Members sent
+Replication started
+1
+ replica channel size 2
+Leader Started
+Members List:
+[ localhost:8081, Leader: true, Next Index:  0]
+
+
+New localhost:8082
+Members sent
+
+New localhost:8083
+Members sent
+Replication started
+1
+ replica channel size 2
+Leader Started
+Members List:
+[ localhost:8081, Leader: true, Next Index:  0]
+
+
+New localhost:8082
+Members sent
+
+New localhost:8083
+Members sent
+Replication started
+1
+ replica channel size 2
+Majority has replied
+Leader Started
+Members List:
+[ localhost:8081, Leader: true, Next Index:  0]
+
+
+New localhost:8082
+Members sent
+
+New localhost:8083
+Members sent
+Replication started
+1
+ replica channel size 2
+Majority has replied
+Leader Started
+Members List:
+[ localhost:8081, Leader: true, Next Index:  0]
+
+
+New localhost:8083
+Members sent
+
+New localhost:8082
+Members sent
+Replication started
+1
+ replica channel size 2
+Majority has replied
+Leader Started
+Members List:
+[ localhost:8081, Leader: true, Next Index:  0]
+
+
+New localhost:8082
+Members sent
+
+New localhost:8083
+Members sent
+Replication started
+1
+ replica channel size 2
+Majority has replied
+Leader Started
+Members List:
+[ localhost:8081, Leader: true, Next Index:  0]
+
+Leader Started
+Members List:
+[ localhost:8081, Leader: true, Next Index:  0]
+
+
+New localhost:8082
+Members sent
+
+New localhost:8083
+Members sent
+Replication started
+1
+ replica channel size 2
+Majority has replied

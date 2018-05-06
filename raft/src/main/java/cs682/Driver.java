@@ -20,6 +20,7 @@ public class Driver {
             Server jettyHttpServer = new Server(Membership.SELF_PORT);
             ServletHandler jettyHandler = new ServletHandler();
             jettyHandler.addServletWithMapping(new ServletHolder(new RPCServlet()), "/appendentry/*");
+            jettyHandler.addServletWithMapping(new ServletHolder(new MembershipServlet()), "/members/*");
             jettyHttpServer.setHandler(jettyHandler);
             jettyHttpServer.start();
             membership.loadInitMembers(config);

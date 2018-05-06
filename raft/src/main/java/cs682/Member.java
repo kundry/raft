@@ -16,6 +16,13 @@ public class Member {
         this.nextIndex = nextIndex;
     }
 
+    public Member( String host, String port, boolean isLeader){
+        this.host = host;
+        this.port = port;
+        this.isLeader = isLeader;
+        this.nextIndex = 0;
+    }
+
     public String getHost(){
         return this.host;
     }
@@ -74,7 +81,7 @@ public class Member {
         boolean leader;
         if (json.get("isLeader").equals("true")) leader = true;
         else leader = false;
-        Member member = new Member((String)json.get("host"), (String)json.get("port"),leader, ((Long)json.get("nextIndex")).intValue());
+        Member member = new Member((String)json.get("host"), (String)json.get("port"),leader);
         return member;
     }
 }

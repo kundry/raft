@@ -1,6 +1,7 @@
 package cs682;
 
 import org.apache.log4j.Logger;
+import org.json.simple.JSONObject;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -8,10 +9,15 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.concurrent.CountDownLatch;
 
 
 public class RPCServlet extends HttpServlet {
     protected static final LogData log = LogData.getInstance();
+    private static List<SendingReplicaWorker> sendingReplicaChannel = new ArrayList<>();
     final static Logger logger = Logger.getLogger(RPCServlet.class);
 
     @Override
@@ -29,20 +35,46 @@ public class RPCServlet extends HttpServlet {
             String jsonContent = getRequestBody(request);
             if(Membership.LEADER){
                 Entry entry = new Entry(jsonContent);
+                System.out.println("json content " + jsonContent);
+                System.out.println("entry object " + entry.getOperationData());
                 LogEntry logentry = new LogEntry(LogData.TERM,entry);
                 log.add(logentry);
-                //boolean replicationSuccess = replicateEntry(logentry);
-                //if (replicationSuccess) {
+                System.out.println(" from the log entry created");
+                System.out.println(" Entry " + logentry.getEntry().getOperationData());
+                boolean replicationSuccess = replicateEntry(logentry);
+                if (replicationSuccess) {
                     //send commit to the app .. respond sending the commit
-                //}
+                    System.out.println("Replication success");
+                }
                 //send append entries to all the followers
                 //should I change the end point ? send the term in a jason or put it in the path
                 //send in the json the log entry
             } else {
                 //follower part decompose the jason take the term and do the sanity check
+                System.out.println("Append entry received" + jsonContent);
             }
 
         }
+    }
+
+    private boolean replicateEntry(LogEntry logentry) {
+        boolean success = false;
+        try {
+            logger.debug("Replication started");
+            logger.debug(Membership.MAJORITY);
+            final CountDownLatch latch = new CountDownLatch(Membership.MAJORITY);
+            logentry.setLatch(latch);
+            logger.debug(" replica channel size " + sendingReplicaChannel.size());
+            for (SendingReplicaWorker follower:  sendingReplicaChannel) {
+                follower.queueLogEntry(logentry);
+            }
+            latch.await();
+            success = true;
+            logger.debug("Majority has replied");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return success;
     }
 
     /**
@@ -68,6 +100,14 @@ public class RPCServlet extends HttpServlet {
             e.printStackTrace();
         }
         return body;
+    }
+
+    /**
+     * Registers workers in the Channel of replication of entries
+     * @param worker  thread that sends the data to be replicated
+     * */
+    public static void registerInChannel(SendingReplicaWorker worker){
+        sendingReplicaChannel.add(worker);
     }
 
 }

@@ -13,4 +13,5 @@ public class Entry {
     public String getOperationData(){
         return this.operationData;
     }
+
 }
