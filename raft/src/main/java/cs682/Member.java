@@ -67,8 +67,9 @@ public class Member {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("[ ").append(host).append(":").append(port).append(", ");
-        sb.append("Leader: ").append(isLeader).append(", ");
-        sb.append("Next Index:  ").append(nextIndex).append("]").append(System.lineSeparator());
+        sb.append("Leader: ").append(isLeader).append(" ]").append(System.lineSeparator());
+        //sb.append("Leader: ").append(isLeader).append(", ");
+        //sb.append("Next Index:  ").append(nextIndex).append("]").append(System.lineSeparator());
         return sb.toString();
     }
 

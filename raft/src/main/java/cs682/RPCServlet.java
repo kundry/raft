@@ -155,6 +155,5 @@ public class RPCServlet extends HttpServlet {
     public static void registerInChannel(SendingReplicaWorker worker){
         sendingReplicaChannel.add(worker);
     }
-
 }
 

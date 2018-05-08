@@ -206,4 +206,49 @@ public class LogData {
         }
     }
 
+    public LogEntry getLogEntryByIndex(int index) {
+        lock.lock();
+        LogEntry result = log.get(index);
+        lock.unlock();
+        return result;
+    }
+
+    public String wrapOldLogEntry(LogEntry logentry, int index){
+        //System.out.println("In wrap");
+        //System.out.println("term " + logentry.getTerm());
+        //System.out.println("entry " + logentry.getEntry().getOperationData().toString());
+
+        JSONObject wrappedJson = new JSONObject();
+        int prevTerm = getPrevTerm(index);
+        int prevIndex = index-1;
+        wrappedJson.put("prevterm", prevTerm);
+        wrappedJson.put("previndex", prevIndex);
+        wrappedJson.put("term", logentry.getTerm());
+        JSONArray array = new JSONArray();
+        array.add(logentry.getEntry().getOperationData());
+        wrappedJson.put("entry", array);
+
+        logger.debug("Preparing Previous LogEntry: ");
+        //logger.debug("prevTerm " + prevTerm );
+        //logger.debug("prevIndex " + prevIndex );
+        //logger.debug("term " + TERM );
+        //logger.debug("entry " + array.toString() );
+        logger.debug(wrappedJson.toString());
+        return wrappedJson.toString();
+    }
+
+    /**
+     * Method that returns the term of the entry before the one in de given
+     * index
+     * @return prevTerm
+     */
+    public int getPrevTerm(int index) {
+        lock.lock();
+        int prevTerm;
+        prevTerm = log.get(index-1).getTerm();
+        lock.unlock();
+        return prevTerm;
+    }
+
+
 }

@@ -715,3 +715,311 @@ Members List:
 
 New localhost:8082
 Members sent
+
+Leader Started
+Members List:
+[ localhost:8081, Leader: true, Next Index:  0]
+
+
+New localhost:8082
+Members sent
+
+appendentry/entry 
+{"oper":"sub"}
+
+Log content:
+0 [ Term: 0, Entry: {"init":0} ]
+1 [ Term: 1, Entry: {"oper":"sub"} ]
+
+
+Replication started
+Replication finished
+AppendEntry accepted by http://localhost:8082
+Majority has replied
+
+appendentry/entry 
+{"oper":"add"}
+
+Log content:
+0 [ Term: 0, Entry: {"init":0} ]
+1 [ Term: 1, Entry: {"oper":"sub"} ]
+2 [ Term: 1, Entry: {"oper":"add"} ]
+
+
+Replication started
+Replication finished
+AppendEntry accepted by http://localhost:8082
+Majority has replied
+
+New localhost:8083
+Members sent
+
+appendentry/entry 
+{"oper":"jmp"}
+
+Log content:
+0 [ Term: 0, Entry: {"init":0} ]
+1 [ Term: 1, Entry: {"oper":"sub"} ]
+2 [ Term: 1, Entry: {"oper":"add"} ]
+3 [ Term: 1, Entry: {"oper":"jmp"} ]
+
+
+Replication started
+Replication finished
+AppendEntry accepted by http://localhost:8082
+Majority has replied
+AppendEntry rejected by http://localhost:8083
+
+Leader Started
+Members List:
+[ localhost:8081, Leader: true, Next Index:  0]
+
+
+New localhost:8082
+Members sent
+
+appendentry/entry 
+{"oper":"jmp"}
+
+Log content:
+0 [ Term: 0, Entry: {"init":0} ]
+1 [ Term: 1, Entry: {"oper":"jmp"} ]
+
+
+Replication started
+Replication finished
+AppendEntry accepted by http://localhost:8082
+Majority has replied
+
+appendentry/entry 
+{"oper":"add"}
+
+Log content:
+0 [ Term: 0, Entry: {"init":0} ]
+1 [ Term: 1, Entry: {"oper":"jmp"} ]
+2 [ Term: 1, Entry: {"oper":"add"} ]
+
+
+Replication started
+Replication finished
+AppendEntry accepted by http://localhost:8082
+Majority has replied
+
+New localhost:8083
+Members sent
+
+appendentry/entry 
+{"oper":"sub"}
+
+Log content:
+0 [ Term: 0, Entry: {"init":0} ]
+1 [ Term: 1, Entry: {"oper":"jmp"} ]
+2 [ Term: 1, Entry: {"oper":"add"} ]
+3 [ Term: 1, Entry: {"oper":"sub"} ]
+
+
+Replication started
+Replication finished
+AppendEntry accepted by http://localhost:8082
+Majority has replied
+AppendEntry rejected by http://localhost:8083
+
+Leader Started
+Members List:
+[ localhost:8081, Leader: true, Next Index:  0]
+
+
+New localhost:8082
+Members sent
+
+appendentry/entry 
+{"oper":"add"}
+
+Log content:
+0 [ Term: 0, Entry: {"init":0} ]
+1 [ Term: 1, Entry: {"oper":"add"} ]
+
+
+Replication started
+Replication finished
+AppendEntry accepted by http://localhost:8082
+Majority has replied
+
+appendentry/entry 
+{"oper":"sub"}
+
+Log content:
+0 [ Term: 0, Entry: {"init":0} ]
+1 [ Term: 1, Entry: {"oper":"add"} ]
+2 [ Term: 1, Entry: {"oper":"sub"} ]
+
+
+Replication started
+Replication finished
+AppendEntry accepted by http://localhost:8082
+Majority has replied
+
+New localhost:8083
+Members sent
+
+appendentry/entry 
+{"oper":"add"}
+
+Log content:
+0 [ Term: 0, Entry: {"init":0} ]
+1 [ Term: 1, Entry: {"oper":"add"} ]
+2 [ Term: 1, Entry: {"oper":"sub"} ]
+3 [ Term: 1, Entry: {"oper":"add"} ]
+
+
+Replication started
+Replication finished
+AppendEntry accepted by http://localhost:8082
+Majority has replied
+AppendEntry rejected by http://localhost:8083
+
+Leader Started
+Members List:
+[ localhost:8081, Leader: true, Next Index:  0]
+
+
+New localhost:8082
+Members sent
+
+appendentry/entry 
+{"oper":"add"}
+
+Log content:
+0 [ Term: 0, Entry: {"init":0} ]
+1 [ Term: 1, Entry: {"oper":"add"} ]
+
+
+Replication started
+Replication finished
+AppendEntry accepted by http://localhost:8082
+Majority has replied
+
+appendentry/entry 
+{"oper":"sub"}
+
+Log content:
+0 [ Term: 0, Entry: {"init":0} ]
+1 [ Term: 1, Entry: {"oper":"add"} ]
+2 [ Term: 1, Entry: {"oper":"sub"} ]
+
+
+Replication started
+Replication finished
+AppendEntry accepted by http://localhost:8082
+Majority has replied
+
+New localhost:8083
+Members sent
+
+appendentry/entry 
+{"oper":"jmp"}
+
+Log content:
+0 [ Term: 0, Entry: {"init":0} ]
+1 [ Term: 1, Entry: {"oper":"add"} ]
+2 [ Term: 1, Entry: {"oper":"sub"} ]
+3 [ Term: 1, Entry: {"oper":"jmp"} ]
+
+
+Replication started
+Replication finished
+AppendEntry accepted by http://localhost:8082
+Majority has replied
+AppendEntry rejected by http://localhost:8083
+Wrapped Old LogEntry: 
+{"entry":[{"oper":"sub"}],"prevterm":1,"term":1,"previndex":1}
+Bad Request
+Wrapped Old LogEntry: 
+{"entry":[{"oper":"add"}],"prevterm":0,"term":1,"previndex":0}
+ Status Code OK
+
+Leader Started
+Members List:
+[ localhost:8081, Leader: true, Next Index:  0]
+
+
+Leader Started
+Members List:
+[ localhost:8081, Leader: true, Next Index:  0]
+
+
+New localhost:8082
+Members sent
+
+appendentry/entry 
+{"oper":"sub"}
+
+Log content:
+0 [ Term: 0, Entry: {"init":0} ]
+1 [ Term: 1, Entry: {"oper":"sub"} ]
+
+
+Replication started
+Replication finished
+AppendEntry accepted by http://localhost:8082
+Majority has replied
+
+appendentry/entry 
+{"oper":"add"}
+
+Log content:
+0 [ Term: 0, Entry: {"init":0} ]
+1 [ Term: 1, Entry: {"oper":"sub"} ]
+2 [ Term: 1, Entry: {"oper":"add"} ]
+
+
+Replication started
+Replication finished
+AppendEntry accepted by http://localhost:8082
+Majority has replied
+
+New localhost:8083
+Members sent
+
+appendentry/entry 
+{"oper":"jmp"}
+
+Log content:
+0 [ Term: 0, Entry: {"init":0} ]
+1 [ Term: 1, Entry: {"oper":"sub"} ]
+2 [ Term: 1, Entry: {"oper":"add"} ]
+3 [ Term: 1, Entry: {"oper":"jmp"} ]
+
+
+Replication started
+Replication finished
+AppendEntry accepted by http://localhost:8082
+Majority has replied
+AppendEntry rejected by http://localhost:8083
+Wrapped Old LogEntry: 
+{"entry":[{"oper":"add"}],"prevterm":1,"term":1,"previndex":1}
+Entry Mismatched
+Wrapped Old LogEntry: 
+{"entry":[{"oper":"sub"}],"prevterm":0,"term":1,"previndex":0}
+Entry Matched
+Wrapped Old LogEntry: 
+{"entry":[{"oper":"add"}],"prevterm":1,"term":1,"previndex":1}
+Entry Matched
+Wrapped Old LogEntry: 
+{"entry":[{"oper":"jmp"}],"prevterm":1,"term":1,"previndex":2}
+Entry Matched
+Log Restored
+
+Leader Started
+Members List:
+[ localhost:8081, Leader: true, Next Index:  0]
+
+
+Leader Started
+Members List:
+[ localhost:8081, Leader: true ]
+
+Leader Started
+Members List:
+[ localhost:8081, Leader: true ]
+

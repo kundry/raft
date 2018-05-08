@@ -31,7 +31,7 @@ public class Membership {
     public static int MAJORITY;
     //public static boolean ELECTION_REPLY;
     private static ExecutorService notificationThreadPool = Executors.newFixedThreadPool(6);
-    private static ExecutorService replicationThreadPool = Executors.newFixedThreadPool(6);
+    public static ExecutorService replicationThreadPool = Executors.newFixedThreadPool(6);
     protected static final LogData log = LogData.getInstance();
     final static Logger logger = Logger.getLogger(Membership.class);
 

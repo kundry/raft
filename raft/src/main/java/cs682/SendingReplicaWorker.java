@@ -78,6 +78,8 @@ public class SendingReplicaWorker implements Runnable {
                             case HttpServletResponse.SC_BAD_REQUEST:
                                 logger.debug("AppendEntry rejected by " + hostAndPort);
                                 // fire up a thread IN LEADER that will handle the reconstruction of the log
+                                RestoringLogWorker worker = new RestoringLogWorker(hostAndPort, LogData.INDEX-1);
+                                worker.run();
                                 break;
                             default:
                                 break;
