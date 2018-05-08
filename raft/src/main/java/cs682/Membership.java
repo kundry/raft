@@ -63,27 +63,37 @@ public class Membership {
         LEADER_HOST = "http://" + config.getProperty("leaderhost");
         LEADER_PORT = Integer.parseInt(config.getProperty("leaderport"));
         IN_ELECTION = false;
-        //ELECTION_REPLY = false;
+
+//        JSONObject initEntry = new JSONObject();
+//        initEntry.put("init",0);
+//        LogEntry init = new LogEntry(0, new Entry(initEntry));
+//        log.addInitLogEntry(init);
+
         String leaderStatus =  config.getProperty("leader");
         if (leaderStatus.equalsIgnoreCase("on")) {
-            logger.debug("Leader Started");
+            logger.debug(System.lineSeparator() + "Leader Started");
             LEADER = true;
             MAJORITY = 0;
             LogData.TERM = 1;
             Member leader = new Member(config.getProperty("leaderhost"), config.getProperty("leaderport"), true, 0);
             members.add(leader);
             printMemberList();
+
+            JSONObject initEntry = new JSONObject();
+            initEntry.put("init",0);
+            LogEntry init = new LogEntry(0, new Entry(initEntry));
+            log.addInitLogEntry(init);
+
             //initSendingReplicaChannel();
         } else {
-            logger.debug("Raft Instance Started at " + SELF_HOST + ":" + SELF_PORT );
+            logger.debug(System.lineSeparator() + "Raft Instance Started at " + SELF_HOST + ":" + SELF_PORT );
             LEADER = false;
             ArrayList<Member> membersFromLeader = register();
             members.addAll(membersFromLeader);
             printMemberList();
             logger.debug("Members received");
-            //ArrayList<Member> membersFromPrimary = register();
-            //members.addAll(membersFromPrimary);
-            //logger.debug("Members received");
+            LogData.INDEX = -1;
+            log.loadRaftLogBackup();
             //replicationThreadPool.submit(EventServlet.receiverWorker);
         }
     }
@@ -132,7 +142,7 @@ public class Membership {
             setPostRequestProperties(conn);
             OutputStreamWriter out = new OutputStreamWriter(conn.getOutputStream());
             JSONObject newInstanceConfig = createJsonWithOwnConfig();
-            System.out.println(newInstanceConfig.toString());
+            //System.out.println(newInstanceConfig.toString());
             out.write(newInstanceConfig.toString());
             out.flush();
             out.close();
@@ -218,7 +228,6 @@ public class Membership {
      * @param response http request
      * */
     public void registerServer(HttpServletRequest request, HttpServletResponse response){
-        lock.lock();
         try {
             String requestBody = getRequestBody(request);
             JSONParser parser = new JSONParser();
@@ -228,18 +237,30 @@ public class Membership {
             logger.debug(System.lineSeparator() + "New " + host + ":" + port);
             Member member = new Member(host, String.valueOf(port), false);
             notifyOtherServers(member);
-            members.add(member);
-            setMajority();
-            updateChannel(member);
+            if (!isRegistered(member)){
+                members.add(member);
+                setMajority();
+                updateChannel(member);
+            }
             sendMyListOfMembers(response);
             logger.debug("Members sent");
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ParseException p) {
             p.printStackTrace();
-        } finally {
-            lock.unlock();
         }
+    }
+
+    private boolean isRegistered(Member member){
+        boolean present = false;
+        synchronized (members) {
+            for (Member server : members) {
+                if (server.getPort().equals(member.getPort()) && server.getHost().equals(member.getHost())) {
+                    present = true;
+                }
+            }
+        }
+        return present;
     }
 
     /**
@@ -249,7 +270,7 @@ public class Membership {
      */
     public void updateChannel(Member m) {
         String hostAndPort = "http://" + m.getHost() + ":" + m.getPort();
-        System.out.println("Updating channel: " + hostAndPort);
+        //System.out.println("Updating channel: " + hostAndPort);
         SendingReplicaWorker worker = new SendingReplicaWorker(hostAndPort);
         replicationThreadPool.submit(worker);
         RPCServlet.registerInChannel(worker);
@@ -337,12 +358,15 @@ public class Membership {
      * @param response Http Response
      * */
     public void addNotifiedServer(HttpServletRequest request, HttpServletResponse response) {
+        lock.lock();
         try {
             String requestBody = getRequestBody(request);
             JSONParser parser = new JSONParser();
             JSONObject jsonObj = (JSONObject) parser.parse(requestBody);
             Member member = Member.fromJsonToMemberObj(jsonObj);
-            members.add(member);
+            if (!isRegistered(member)){
+                members.add(member);
+            }
             logger.debug("Notified " + member.getHost()+":"+ member.getPort());
             printMemberList();
             response.setStatus(HttpServletResponse.SC_OK);
@@ -350,6 +374,8 @@ public class Membership {
             e.printStackTrace();
         } catch (ParseException e) {
             e.printStackTrace();
+        } finally {
+            lock.unlock();
         }
     }
 

@@ -143,3 +143,575 @@ Replication started
 1
  replica channel size 2
 Majority has replied
+Leader Started
+Members List:
+[ localhost:8081, Leader: true, Next Index:  0]
+
+
+New localhost:8082
+Members sent
+
+New localhost:8083
+Members sent
+Replication started
+1
+ replica channel size 2
+Majority has replied
+Leader Started
+Members List:
+[ localhost:8081, Leader: true, Next Index:  0]
+
+
+New localhost:8082
+Members sent
+
+New localhost:8083
+Members sent
+Replication started
+1
+ replica channel size 2
+Majority has replied
+Leader Started
+Members List:
+[ localhost:8081, Leader: true, Next Index:  0]
+
+
+New localhost:8082
+Members sent
+
+New localhost:8083
+Members sent
+Replication started
+1
+ replica channel size 2
+Majority has replied
+Leader Started
+Members List:
+[ localhost:8081, Leader: true, Next Index:  0]
+
+Leader Started
+Members List:
+[ localhost:8081, Leader: true, Next Index:  0]
+
+
+New localhost:8082
+Members sent
+
+New localhost:8083
+Members sent
+
+appendentry/entry 
+
+Log content:
+[ Term: 0, Entry: {"init":0} ]
+[ Term: 1, Entry: {"param":"param1","oper":"oper1"} ]
+
+
+Replication started
+Majority = 1
+Wrapped LogEntry: 
+{"entry":[{"param":"param1","oper":"oper1"}],"prevterm":0,"term":1,"previndex":0}
+Majority has replied
+Leader Started
+Members List:
+[ localhost:8081, Leader: true, Next Index:  0]
+
+
+New localhost:8082
+Members sent
+
+New localhost:8083
+Members sent
+
+appendentry/entry 
+
+Log content:
+[ Term: 0, Entry: {"init":0} ]
+[ Term: 1, Entry: {"param":"param1","oper":"oper1"} ]
+
+
+Replication started
+Majority = 1
+Wrapped LogEntry: 
+{"entry":[{"param":"param1","oper":"oper1"}],"prevterm":0,"term":1,"previndex":0}
+AppendEntry accepted by http://localhost:8083
+Leader Started
+Members List:
+[ localhost:8081, Leader: true, Next Index:  0]
+
+
+New localhost:8082
+Members sent
+
+New localhost:8083
+Members sent
+
+appendentry/entry 
+
+Log content:
+[ Term: 0, Entry: {"init":0} ]
+[ Term: 1, Entry: {"param":"param1","oper":"oper1"} ]
+
+
+Replication started
+Majority = 1
+Wrapped LogEntry: 
+{"entry":[{"param":"param1","oper":"oper1"}],"prevterm":0,"term":1,"previndex":0}
+AppendEntry accepted by http://localhost:8082
+Leader Started
+Members List:
+[ localhost:8081, Leader: true, Next Index:  0]
+
+
+New localhost:8082
+Members sent
+
+New localhost:8083
+Members sent
+
+appendentry/entry 
+
+Log content:
+[ Term: 0, Entry: {"init":0} ]
+[ Term: 1, Entry: {"param":"param1","oper":"oper1"} ]
+
+
+Replication started
+Majority = 1
+Wrapped LogEntry: 
+{"entry":[{"param":"param1","oper":"oper1"}],"prevterm":0,"term":1,"previndex":0}
+AppendEntry accepted by http://localhost:8082
+Leader Started
+Members List:
+[ localhost:8081, Leader: true, Next Index:  0]
+
+
+New localhost:8082
+Members sent
+
+New localhost:8083
+Members sent
+
+appendentry/entry 
+
+Log content:
+[ Term: 0, Entry: {"init":0} ]
+[ Term: 1, Entry: {"param":"param1","oper":"oper1"} ]
+
+
+Replication started
+Majority = 1
+Wrapped LogEntry: 
+{"entry":[{"param":"param1","oper":"oper1"}],"prevterm":0,"term":1,"previndex":0}
+AppendEntry accepted by http://localhost:8083
+Leader Started
+Members List:
+[ localhost:8081, Leader: true, Next Index:  0]
+
+
+New localhost:8082
+Members sent
+
+New localhost:8083
+Members sent
+
+appendentry/entry 
+
+Log content:
+[ Term: 0, Entry: {"init":0} ]
+[ Term: 1, Entry: {"param":"param1","oper":"oper1"} ]
+
+
+Replication started
+Majority = 1
+Wrapped LogEntry: 
+{"entry":[{"param":"param1","oper":"oper1"}],"prevterm":0,"term":1,"previndex":0}
+AppendEntry accepted by http://localhost:8082
+Leader Started
+Members List:
+[ localhost:8081, Leader: true, Next Index:  0]
+
+
+New localhost:8082
+Members sent
+
+New localhost:8083
+Members sent
+
+appendentry/entry 
+
+Log content:
+[ Term: 0, Entry: {"init":0} ]
+[ Term: 1, Entry: {"param":"param1","oper":"oper1"} ]
+
+
+Replication started
+Majority = 1
+Wrapped LogEntry: 
+{"entry":[{"param":"param1","oper":"oper1"}],"prevterm":0,"term":1,"previndex":0}
+AppendEntry accepted by http://localhost:8083
+Leader Started
+Members List:
+[ localhost:8081, Leader: true, Next Index:  0]
+
+
+New localhost:8082
+Members sent
+
+New localhost:8083
+Members sent
+
+appendentry/entry 
+
+Log content:
+[ Term: 0, Entry: {"init":0} ]
+[ Term: 1, Entry: {"param":"param1","oper":"oper1"} ]
+
+
+Replication started
+Majority = 1
+Wrapped LogEntry: 
+{"entry":[{"param":"param1","oper":"oper1"}],"prevterm":0,"term":1,"previndex":0}
+AppendEntry accepted by http://localhost:8082
+Leader Started
+Members List:
+[ localhost:8081, Leader: true, Next Index:  0]
+
+
+New localhost:8082
+Members sent
+
+New localhost:8083
+Members sent
+
+appendentry/entry 
+
+Log content:
+[ Term: 0, Entry: {"init":0} ]
+[ Term: 1, Entry: {"param":"param1","oper":"oper1"} ]
+
+
+Replication started
+Majority = 1
+Wrapped LogEntry: 
+{"entry":[{"param":"param1","oper":"oper1"}],"prevterm":0,"term":1,"previndex":0}
+Wrapped LogEntry: 
+{"entry":[{"param":"param1","oper":"oper1"}],"prevterm":0,"term":1,"previndex":0}
+AppendEntry accepted by http://localhost:8082
+AppendEntry accepted by http://localhost:8083
+Majority has replied
+Leader Started
+Members List:
+[ localhost:8081, Leader: true, Next Index:  0]
+
+
+New localhost:8082
+Members sent
+
+New localhost:8083
+Members sent
+
+appendentry/entry 
+
+Log content:
+0 [ Term: 0, Entry: {"init":0} ]
+1 [ Term: 1, Entry: {"param":"param1","oper":"oper1"} ]
+
+
+Replication started
+Majority = 1
+Wrapped LogEntry: 
+prevTerm 0
+prevIndex 0
+term 1
+entry [{"param":"param1","oper":"oper1"}]
+Wrapped LogEntry: 
+prevTerm 0
+prevIndex 0
+term 1
+entry [{"param":"param1","oper":"oper1"}]
+AppendEntry accepted by http://localhost:8082
+Majority has replied
+AppendEntry accepted by http://localhost:8083
+Leader Started
+Members List:
+[ localhost:8081, Leader: true, Next Index:  0]
+
+
+New localhost:8082
+Members sent
+
+New localhost:8083
+Members sent
+
+appendentry/entry 
+{"param":"param1","oper":"oper1"}
+
+Log content:
+0 [ Term: 0, Entry: {"init":0} ]
+1 [ Term: 1, Entry: {"param":"param1","oper":"oper1"} ]
+
+
+Replication started
+AppendEntry accepted by http://localhost:8082
+Majority has replied
+AppendEntry accepted by http://localhost:8083
+Leader Started
+Members List:
+[ localhost:8081, Leader: true, Next Index:  0]
+
+
+New localhost:8082
+Members sent
+
+New localhost:8083
+Members sent
+
+appendentry/entry 
+{"param":"param1","oper":"oper1"}
+
+Log content:
+0 [ Term: 0, Entry: {"init":0} ]
+1 [ Term: 1, Entry: {"param":"param1","oper":"oper1"} ]
+
+
+Replication started
+Replication finished
+AppendEntry accepted by http://localhost:8082
+Majority has replied
+AppendEntry accepted by http://localhost:8083
+
+appendentry/entry 
+{"param":"param2","oper":"oper2"}
+
+Log content:
+0 [ Term: 0, Entry: {"init":0} ]
+1 [ Term: 1, Entry: {"param":"param1","oper":"oper1"} ]
+2 [ Term: 1, Entry: {"param":"param2","oper":"oper2"} ]
+
+
+Replication started
+Replication finished
+AppendEntry accepted by http://localhost:8083
+AppendEntry accepted by http://localhost:8082
+Majority has replied
+
+appendentry/entry 
+{"param":"param3","oper":"oper3"}
+
+Log content:
+0 [ Term: 0, Entry: {"init":0} ]
+1 [ Term: 1, Entry: {"param":"param1","oper":"oper1"} ]
+2 [ Term: 1, Entry: {"param":"param2","oper":"oper2"} ]
+3 [ Term: 1, Entry: {"param":"param3","oper":"oper3"} ]
+
+
+Replication started
+Replication finished
+AppendEntry accepted by http://localhost:8083
+Majority has replied
+AppendEntry accepted by http://localhost:8082
+[{"entry":[{"init":0}],"term":0}]
+Leader Started
+Members List:
+[ localhost:8081, Leader: true, Next Index:  0]
+
+
+New localhost:8082
+Members sent
+
+New localhost:8083
+Members sent
+
+appendentry/entry 
+{"param":"param1","oper":"oper1"}
+
+Log content:
+0 [ Term: 0, Entry: {"init":0} ]
+1 [ Term: 1, Entry: {"param":"param1","oper":"oper1"} ]
+
+
+[{"entry":[{"init":0}],"term":0},{"entry":[{"param":"param1","oper":"oper1"}],"term":1}]
+Replication started
+Replication finished
+AppendEntry accepted by http://localhost:8082
+Majority has replied
+AppendEntry accepted by http://localhost:8083
+
+appendentry/entry 
+{"param":"param2","oper":"oper2"}
+
+Log content:
+0 [ Term: 0, Entry: {"init":0} ]
+1 [ Term: 1, Entry: {"param":"param1","oper":"oper1"} ]
+2 [ Term: 1, Entry: {"param":"param2","oper":"oper2"} ]
+
+
+[{"entry":[{"init":0}],"term":0},{"entry":[{"param":"param1","oper":"oper1"}],"term":1},{"entry":[{"param":"param2","oper":"oper2"}],"term":1}]
+Replication started
+Replication finished
+AppendEntry accepted by http://localhost:8082
+Majority has replied
+AppendEntry accepted by http://localhost:8083
+
+appendentry/entry 
+{"param":"param3","oper":"oper3"}
+
+Log content:
+0 [ Term: 0, Entry: {"init":0} ]
+1 [ Term: 1, Entry: {"param":"param1","oper":"oper1"} ]
+2 [ Term: 1, Entry: {"param":"param2","oper":"oper2"} ]
+3 [ Term: 1, Entry: {"param":"param3","oper":"oper3"} ]
+
+
+[{"entry":[{"init":0}],"term":0},{"entry":[{"param":"param1","oper":"oper1"}],"term":1},{"entry":[{"param":"param2","oper":"oper2"}],"term":1},{"entry":[{"param":"param3","oper":"oper3"}],"term":1}]
+Replication started
+Replication finished
+AppendEntry accepted by http://localhost:8083
+AppendEntry accepted by http://localhost:8082
+Majority has replied
+[{"entry":[{"init":0}],"term":0}]
+Leader Started
+Members List:
+[ localhost:8081, Leader: true, Next Index:  0]
+
+
+New localhost:8082
+Members sent
+
+New localhost:8083
+Members sent
+
+appendentry/entry 
+{"param":"param1","oper":"oper1"}
+
+Log content:
+0 [ Term: 0, Entry: {"init":0} ]
+1 [ Term: 1, Entry: {"param":"param1","oper":"oper1"} ]
+
+
+[{"entry":[{"init":0}],"term":0},{"entry":[{"param":"param1","oper":"oper1"}],"term":1}]
+Replication started
+Replication finished
+AppendEntry accepted by http://localhost:8082
+Majority has replied
+AppendEntry accepted by http://localhost:8083
+
+appendentry/entry 
+{"param":"param2","oper":"oper2"}
+
+Log content:
+0 [ Term: 0, Entry: {"init":0} ]
+1 [ Term: 1, Entry: {"param":"param1","oper":"oper1"} ]
+2 [ Term: 1, Entry: {"param":"param2","oper":"oper2"} ]
+
+
+[{"entry":[{"init":0}],"term":0},{"entry":[{"param":"param1","oper":"oper1"}],"term":1},{"entry":[{"param":"param2","oper":"oper2"}],"term":1}]
+Replication started
+Replication finished
+AppendEntry accepted by http://localhost:8082
+Majority has replied
+AppendEntry accepted by http://localhost:8083
+
+appendentry/entry 
+{"param":"param3","oper":"oper3"}
+
+Log content:
+0 [ Term: 0, Entry: {"init":0} ]
+1 [ Term: 1, Entry: {"param":"param1","oper":"oper1"} ]
+2 [ Term: 1, Entry: {"param":"param2","oper":"oper2"} ]
+3 [ Term: 1, Entry: {"param":"param3","oper":"oper3"} ]
+
+
+[{"entry":[{"init":0}],"term":0},{"entry":[{"param":"param1","oper":"oper1"}],"term":1},{"entry":[{"param":"param2","oper":"oper2"}],"term":1},{"entry":[{"param":"param3","oper":"oper3"}],"term":1}]
+Replication started
+Replication finished
+AppendEntry accepted by http://localhost:8082
+Majority has replied
+AppendEntry accepted by http://localhost:8083
+Leader Started
+Members List:
+[ localhost:8081, Leader: true, Next Index:  0]
+
+
+New localhost:8082
+Members sent
+
+New localhost:8083
+Members sent
+
+appendentry/entry 
+{"param":"param1","oper":"oper1"}
+
+Log content:
+0 [ Term: 0, Entry: {"init":0} ]
+1 [ Term: 1, Entry: {"param":"param1","oper":"oper1"} ]
+
+
+Replication started
+Replication finished
+AppendEntry accepted by http://localhost:8082
+Majority has replied
+AppendEntry accepted by http://localhost:8083
+Leader Started
+Members List:
+[ localhost:8081, Leader: true, Next Index:  0]
+
+
+New localhost:8082
+Members sent
+
+New localhost:8083
+Members sent
+
+appendentry/entry 
+{"param":"param1","oper":"oper1"}
+
+Log content:
+0 [ Term: 0, Entry: {"init":0} ]
+1 [ Term: 1, Entry: {"param":"param1","oper":"oper1"} ]
+
+
+Replication started
+Replication finished
+AppendEntry accepted by http://localhost:8082
+Majority has replied
+AppendEntry accepted by http://localhost:8083
+
+appendentry/entry 
+{"param":"param2","oper":"oper2"}
+
+Log content:
+0 [ Term: 0, Entry: {"init":0} ]
+1 [ Term: 1, Entry: {"param":"param1","oper":"oper1"} ]
+2 [ Term: 1, Entry: {"param":"param2","oper":"oper2"} ]
+
+
+Replication started
+Replication finished
+AppendEntry accepted by http://localhost:8082
+Majority has replied
+AppendEntry accepted by http://localhost:8083
+
+appendentry/entry 
+{"param":"param3","oper":"oper3"}
+
+Log content:
+0 [ Term: 0, Entry: {"init":0} ]
+1 [ Term: 1, Entry: {"param":"param1","oper":"oper1"} ]
+2 [ Term: 1, Entry: {"param":"param2","oper":"oper2"} ]
+3 [ Term: 1, Entry: {"param":"param3","oper":"oper3"} ]
+
+
+Replication started
+Replication finished
+AppendEntry accepted by http://localhost:8082
+AppendEntry accepted by http://localhost:8083
+Majority has replied
+Leader Started
+Members List:
+[ localhost:8081, Leader: true, Next Index:  0]
+
+
+New localhost:8082
+Members sent

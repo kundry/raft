@@ -18,6 +18,7 @@ public class SendingReplicaWorker implements Runnable {
     public boolean beingLeader;
     private String hostAndPort;
     private Queue<LogEntry> logEntriesQueue;
+    protected static final LogData log = LogData.getInstance();
     final static Logger logger = Logger.getLogger(SendingReplicaWorker.class);
 
     /** Constructor of the class that initialize the  parameters needed to establish the
@@ -36,7 +37,7 @@ public class SendingReplicaWorker implements Runnable {
      */
     public void queueLogEntry(LogEntry logentry){
         synchronized(this) {
-            System.out.println("in queueLogentry()");
+            //System.out.println("in queueLogentry()");
             logEntriesQueue.add(logentry);
             this.notify();
         }
@@ -52,7 +53,7 @@ public class SendingReplicaWorker implements Runnable {
                     e.printStackTrace();
                 }
                 while (!logEntriesQueue.isEmpty()) {
-                    System.out.println("Dequeueing");
+                    //System.out.println("Dequeueing");
                     LogEntry incomingLogEntry = logEntriesQueue.remove();
                     String url = hostAndPort + "/appendentry/entry";
                     try {
@@ -60,23 +61,31 @@ public class SendingReplicaWorker implements Runnable {
                         HttpURLConnection conn  = (HttpURLConnection) urlObj.openConnection();
                         setPostRequestProperties(conn);
                         OutputStreamWriter out = new OutputStreamWriter(conn.getOutputStream());
-                        out.write(incomingLogEntry.wrap());
+                        String wrappedEntry = log.wrap(incomingLogEntry);
+                        out.write(wrappedEntry);
                         out.flush();
                         out.close();
                         int responseCode = conn.getResponseCode();
                         switch (responseCode) {
                             case HttpServletResponse.SC_OK:
-                                System.out.println("latch count " + incomingLogEntry.latch.getCount());
+                                logger.debug("AppendEntry accepted by " + hostAndPort);
+                                //System.out.println("latch count " + incomingLogEntry.latch.getCount());
                                 if (incomingLogEntry.latch.getCount()>0) {
-                                    System.out.println("Decrementing latch");
+                                    //System.out.println("Decrementing latch");
                                     incomingLogEntry.decrementLatch();
                                 }
+                                break;
+                            case HttpServletResponse.SC_BAD_REQUEST:
+                                logger.debug("AppendEntry rejected by " + hostAndPort);
+                                // fire up a thread IN LEADER that will handle the reconstruction of the log
                                 break;
                             default:
                                 break;
                         }
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        logger.debug("Follower down " + hostAndPort);
+                        logger.debug("Retrying... " + "term: "+incomingLogEntry.getTerm() +" entry: "+ incomingLogEntry.getEntry().getOperationData().toString());
+                        queueLogEntry(incomingLogEntry);
                     }
                 }
             }

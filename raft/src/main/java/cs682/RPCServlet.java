@@ -1,7 +1,11 @@
 package cs682;
 
+
 import org.apache.log4j.Logger;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -24,7 +28,7 @@ public class RPCServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response){
         String pathInfo = request.getPathInfo();
         if (pathInfo.equals("/")) {
-            //listAllEvents(response);
+            //to do
         }
     }
 
@@ -33,27 +37,68 @@ public class RPCServlet extends HttpServlet {
         String pathInfo = request.getPathInfo();
         if (pathInfo.equals("/entry")) {
             String jsonContent = getRequestBody(request);
+            JSONObject json = to_jsonObject(jsonContent);
             if(Membership.LEADER){
-                Entry entry = new Entry(jsonContent);
-                System.out.println("json content " + jsonContent);
-                System.out.println("entry object " + entry.getOperationData());
-                LogEntry logentry = new LogEntry(LogData.TERM,entry);
-                log.add(logentry);
-                System.out.println(" from the log entry created");
-                System.out.println(" Entry " + logentry.getEntry().getOperationData());
-                boolean replicationSuccess = replicateEntry(logentry);
-                if (replicationSuccess) {
-                    //send commit to the app .. respond sending the commit
-                    System.out.println("Replication success");
-                }
-                //send append entries to all the followers
-                //should I change the end point ? send the term in a jason or put it in the path
-                //send in the json the log entry
+                response.setStatus(HttpServletResponse.SC_OK);  /** The leader will get back to the app once the entry is committed */
+                processAppAppendEntry(json);
             } else {
-                //follower part decompose the jason take the term and do the sanity check
-                System.out.println("Append entry received" + jsonContent);
+                processLeadersAppendEntry(jsonContent, response); /** Follower parses the jason and do the consistency check */
             }
+        }
+    }
 
+    private void processAppAppendEntry(JSONObject json){
+        Entry entry = new Entry(json);
+        logger.debug(System.lineSeparator() + "appendentry/entry ");
+        logger.debug(entry.getOperationData().toString());
+        LogEntry logentry = new LogEntry(LogData.TERM,entry);
+        log.add(logentry);
+        boolean replicationSuccess = replicateEntry(logentry);
+        if (replicationSuccess) {
+            //send commit to the app .. respond sending the commit
+            System.out.println("Entry can be committed...");
+        }
+        //send append entries to all the followers
+        //should I change the end point ? send the term in a jason or put it in the path
+        //send in the json the log entry
+    }
+
+    private void processLeadersAppendEntry(String jsonContent, HttpServletResponse response){
+        try {
+            logger.debug(System.lineSeparator() + "appendentry/entry ");
+            JSONParser parser = new JSONParser();
+            JSONObject wrappedEntry = (JSONObject) parser.parse(jsonContent);
+            int prevTerm = ((Long)wrappedEntry.get("prevterm")).intValue();
+            int prevIndex = ((Long)wrappedEntry.get("previndex")).intValue();
+            int term = ((Long)wrappedEntry.get("term")).intValue();
+            JSONArray entryArray = (JSONArray)wrappedEntry.get("entry");
+            JSONObject appOperation = (JSONObject)entryArray.get(0);
+            Entry entry = new Entry(appOperation);
+            LogEntry logEntryToAdd = new LogEntry(term, entry);
+            logger.debug("prevTerm " + prevTerm);
+            logger.debug("prevIndex " + prevIndex);
+            logger.debug("term " + term);
+            logger.debug("entry " + appOperation.toString());
+            boolean checkSuccess = log.consistencyCheck(prevTerm, prevIndex, logEntryToAdd);
+            if (checkSuccess){
+                response.setStatus(HttpServletResponse.SC_OK);
+            } else {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private JSONObject to_jsonObject(String stringData){
+        JSONObject json = new JSONObject();
+        try {
+            JSONParser parser = new JSONParser();
+            json = (JSONObject) parser.parse(stringData);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        } finally {
+            return json;
         }
     }
 
@@ -61,13 +106,14 @@ public class RPCServlet extends HttpServlet {
         boolean success = false;
         try {
             logger.debug("Replication started");
-            logger.debug(Membership.MAJORITY);
+            //logger.debug("Majority = " + Membership.MAJORITY);
             final CountDownLatch latch = new CountDownLatch(Membership.MAJORITY);
             logentry.setLatch(latch);
-            logger.debug(" replica channel size " + sendingReplicaChannel.size());
-            for (SendingReplicaWorker follower:  sendingReplicaChannel) {
+            //logger.debug(" replica channel size " + sendingReplicaChannel.size());
+            for (SendingReplicaWorker follower: sendingReplicaChannel) {
                 follower.queueLogEntry(logentry);
             }
+            logger.debug("Replication finished");
             latch.await();
             success = true;
             logger.debug("Majority has replied");

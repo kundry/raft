@@ -35,6 +35,9 @@ public class LogEntry {
     public Entry getEntry(){
         return this.entry;
     }
+    public int getTerm(){
+        return this.term;
+    }
     /**
      * Decrements the latch
      */
@@ -42,30 +45,5 @@ public class LogEntry {
         this.latch.countDown();
     }
 
-
-    /**
-     * Builds the json like string with the content of the log entry to be
-     * sent to the followers
-     */
-    public String wrap(){
-        JSONObject json = new JSONObject();
-        try {
-            System.out.println("In wrap");
-            System.out.println("term " + this.term);
-            System.out.println("entry " + this.entry.getOperationData());
-            JSONParser parser = new JSONParser();
-            JSONObject jsonObj = (JSONObject) parser.parse(this.entry.getOperationData());
-
-
-            json.put("term", this.term);
-            json.put("entry", jsonObj.toString());
-            System.out.println(json.toString());
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-
-        return json.toString();
-    }
 
 }
