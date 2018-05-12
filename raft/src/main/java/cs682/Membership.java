@@ -33,6 +33,9 @@ public class Membership {
     private static ExecutorService notificationThreadPool = Executors.newFixedThreadPool(6);
     public static ExecutorService replicationThreadPool = Executors.newFixedThreadPool(6);
     protected static final LogData log = LogData.getInstance();
+    public static Timer ELECTION_TIMER = new Timer("Timer");
+    public static long ELECTION_DELAY  = 12000L;
+    public static long ELECTION_PERIOD  = 12000L;
     final static Logger logger = Logger.getLogger(Membership.class);
 
     /** Makes sure only one Membership is instantiated. */
@@ -85,6 +88,12 @@ public class Membership {
             log.addInitLogEntry(init);
 
             //initSendingReplicaChannel();
+
+            Timer timer = new Timer("Timer");
+            long delay  = 10000L;
+            long period = 10000L;
+            timer.scheduleAtFixedRate(new HeartBeatTimeTask(), delay, period);
+
         } else {
             logger.debug(System.lineSeparator() + "Raft Instance Started at " + SELF_HOST + ":" + SELF_PORT );
             LEADER = false;
@@ -94,7 +103,11 @@ public class Membership {
             logger.debug("Members received");
             LogData.INDEX = -1;
             log.loadRaftLogBackup();
-            //replicationThreadPool.submit(EventServlet.receiverWorker);
+            replicationThreadPool.submit(RPCServlet.receiverWorker);
+            //Timer election_timer = new Timer("Timer");
+            //long election_delay  = 12000L;
+            //long election_period = 12000L;
+            ELECTION_TIMER.scheduleAtFixedRate(new ElectionTimerTask(), ELECTION_DELAY, ELECTION_PERIOD);
         }
     }
 
@@ -414,6 +427,21 @@ public class Membership {
             MAJORITY = half;
         }
     }
+
+    /**
+     * Method that generates a list of the current members in the architecture
+     * @return ArrayList of members
+     */
+    public ArrayList<Member> getMembers(){
+        synchronized (members) {
+            ArrayList<Member> list = new ArrayList<>();
+            for (Member m : members) {
+                list.add(m);
+            }
+            return list;
+        }
+    }
+
     /**
      * Method that prints on the console the content
      * of the data structure of members

@@ -25,10 +25,6 @@ public class Driver {
             jettyHttpServer.start();
             membership.loadInitMembers(config);
 
-            //Timer timer = new Timer("Timer");
-            //long delay  = 10000L;
-            //long period = 10000L;
-            //timer.scheduleAtFixedRate(new HeartBeatTimeTask(), delay, period);
         } catch (Exception e) {
             e.printStackTrace();
         }

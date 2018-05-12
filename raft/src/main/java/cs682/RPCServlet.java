@@ -16,19 +16,25 @@ import java.io.InputStreamReader;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Timer;
 import java.util.concurrent.CountDownLatch;
 
 
 public class RPCServlet extends HttpServlet {
     protected static final LogData log = LogData.getInstance();
+    //protected static final Membership membership = Membership.getInstance();
     private static List<SendingReplicaWorker> sendingReplicaChannel = new ArrayList<>();
+    public static final ReceivingAppendEntryWorker receiverWorker = new ReceivingAppendEntryWorker();
     final static Logger logger = Logger.getLogger(RPCServlet.class);
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response){
         String pathInfo = request.getPathInfo();
-        if (pathInfo.equals("/")) {
-            //to do
+        if (pathInfo.equals("/entry")) {
+            System.out.println("Heartbeat received");
+            Membership.ELECTION_TIMER.cancel();
+            Membership.ELECTION_TIMER = new Timer("Timer");
+            Membership.ELECTION_TIMER.scheduleAtFixedRate(new ElectionTimerTask(), Membership.ELECTION_DELAY, Membership.ELECTION_PERIOD);
         }
     }
 
@@ -63,31 +69,10 @@ public class RPCServlet extends HttpServlet {
         //send in the json the log entry
     }
 
+
     private void processLeadersAppendEntry(String jsonContent, HttpServletResponse response){
-        try {
-            logger.debug(System.lineSeparator() + "appendentry/entry ");
-            JSONParser parser = new JSONParser();
-            JSONObject wrappedEntry = (JSONObject) parser.parse(jsonContent);
-            int prevTerm = ((Long)wrappedEntry.get("prevterm")).intValue();
-            int prevIndex = ((Long)wrappedEntry.get("previndex")).intValue();
-            int term = ((Long)wrappedEntry.get("term")).intValue();
-            JSONArray entryArray = (JSONArray)wrappedEntry.get("entry");
-            JSONObject appOperation = (JSONObject)entryArray.get(0);
-            Entry entry = new Entry(appOperation);
-            LogEntry logEntryToAdd = new LogEntry(term, entry);
-            logger.debug("prevTerm " + prevTerm);
-            logger.debug("prevIndex " + prevIndex);
-            logger.debug("term " + term);
-            logger.debug("entry " + appOperation.toString());
-            boolean checkSuccess = log.consistencyCheck(prevTerm, prevIndex, logEntryToAdd);
-            if (checkSuccess){
-                response.setStatus(HttpServletResponse.SC_OK);
-            } else {
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            }
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+        ReplicatedLogEntry repLogEntry = new ReplicatedLogEntry(jsonContent, response);
+        receiverWorker.queueReplicatedLogEntry(repLogEntry);
     }
 
     private JSONObject to_jsonObject(String stringData){
