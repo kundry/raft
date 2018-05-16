@@ -2,7 +2,6 @@ package cs682;
 
 
 import org.apache.log4j.Logger;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -15,10 +14,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Timer;
 import java.util.concurrent.CountDownLatch;
 
-
+/** Class that is in charge of mapping all the requests and perform the
+ * corresponding actions. All the raft RPCs are implemented as HTTP Requests
+ * and they are received by this servlet
+ */
 public class RPCServlet extends HttpServlet {
     protected static final LogData log = LogData.getInstance();
     protected static final Membership membership = Membership.getInstance();
@@ -26,10 +27,6 @@ public class RPCServlet extends HttpServlet {
     public static final ReceivingAppendEntryWorker receiverWorker = new ReceivingAppendEntryWorker();
     final static Logger logger = Logger.getLogger(RPCServlet.class);
 
-    @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response){
-        String pathInfo = request.getPathInfo();
-    }
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response){

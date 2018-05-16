@@ -9,6 +9,9 @@ import org.json.simple.parser.ParseException;
 import javax.servlet.http.HttpServletResponse;
 
 
+/** Thread that receives the append entries and perform its processing.
+ *  One thread is created per entry received
+ */
 public class ReceivingRepAppendEntryWorker implements Runnable {
 
     private String json;
@@ -19,7 +22,6 @@ public class ReceivingRepAppendEntryWorker implements Runnable {
     public ReceivingRepAppendEntryWorker( String json, HttpServletResponse response){
         this.json = json;
         this.response = response;
-
     }
 
     @Override

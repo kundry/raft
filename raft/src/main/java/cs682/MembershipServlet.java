@@ -9,12 +9,6 @@ public class MembershipServlet extends HttpServlet {
     protected static final Membership membership = Membership.getInstance();
 
     @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response){
-        //String pathInfo = request.getPathInfo();
-
-    }
-
-    @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response){
         String pathInfo = request.getPathInfo();
         if (pathInfo.equals("/register")) {

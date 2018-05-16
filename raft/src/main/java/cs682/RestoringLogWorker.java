@@ -9,7 +9,9 @@ import java.net.HttpURLConnection;
 import java.net.ProtocolException;
 import java.net.URL;
 
-
+/** Thread that performs the fixing of the raft log of followers that are behind and
+ * keeps control of the NextIndex variable per follower
+ */
 public class RestoringLogWorker implements Runnable {
     //public boolean behind;
     private String hostAndPort;

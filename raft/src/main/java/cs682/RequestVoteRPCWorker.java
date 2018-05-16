@@ -10,6 +10,9 @@ import java.net.ProtocolException;
 import java.net.URL;
 import java.util.concurrent.CountDownLatch;
 
+/** Class that sends the RequestVotesRPC from the candidate to the
+ * the rest of the nodes in the election process
+ */
 public class RequestVoteRPCWorker implements Runnable{
     private String url;
     private String body;

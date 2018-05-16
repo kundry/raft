@@ -17,7 +17,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
-
+/** Class that holds the Raft Log and has all the operations available over the log
+ * It also keeps track of global variables used by other classes related with different
+ * raft operations*/
 public class LogData {
     private List<LogEntry> log;
     private ReentrantLock lock;
