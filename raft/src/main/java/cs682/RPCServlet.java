@@ -82,8 +82,12 @@ public class RPCServlet extends HttpServlet {
 
 
     private void processLeadersAppendEntry(String jsonContent, HttpServletResponse response){
-        ReplicatedLogEntry repLogEntry = new ReplicatedLogEntry(jsonContent, response);
-        receiverWorker.queueReplicatedLogEntry(repLogEntry);
+        /** The following commented lines are used if I create a queue in the follower to store the entries
+         * I tested both but I decided to create an independent thread per entry*/
+        //ReplicatedLogEntry repLogEntry = new ReplicatedLogEntry(jsonContent, response);
+        //receiverWorker.queueReplicatedLogEntry(repLogEntry);
+        ReceivingRepAppendEntryWorker worker = new ReceivingRepAppendEntryWorker(jsonContent, response);
+        worker.run();
     }
 
     private JSONObject to_jsonObject(String stringData){
