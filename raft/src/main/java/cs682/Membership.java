@@ -18,6 +18,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.TimeUnit;
+import java.util.Random;
 
 public class Membership {
 
@@ -25,22 +26,21 @@ public class Membership {
     private ReentrantLock lock;
     public static boolean LEADER;
     public static boolean CANDIDATE;
+    public static boolean FOLLOWER;
     public static int SELF_PORT;
     public static String SELF_HOST;
     public static String LEADER_HOST;
     public static int LEADER_PORT;
-    //public static volatile int ID_COUNT;
     public static boolean IN_ELECTION;
     public static String VOTED_FOR;
-    //public static int VOTES_RECEIVED;
+    public static boolean ALREADY_VOTED;
     public static int MAJORITY;
-    //public static boolean ELECTION_REPLY;
     private static ExecutorService notificationThreadPool = Executors.newFixedThreadPool(6);
     public static ExecutorService replicationThreadPool = Executors.newFixedThreadPool(6);
     protected static final LogData log = LogData.getInstance();
     public static Timer ELECTION_TIMER = new Timer("Timer");
     public static long ELECTION_DELAY  = 15000L;
-    public static long ELECTION_PERIOD  = 15000L;
+    public static long ELECTION_PERIOD;
     final static Logger logger = Logger.getLogger(Membership.class);
 
     /** Makes sure only one Membership is instantiated. */
@@ -72,17 +72,15 @@ public class Membership {
         LEADER_PORT = Integer.parseInt(config.getProperty("leaderport"));
         IN_ELECTION = false;
         CANDIDATE = false;
+        ALREADY_VOTED = false;
         VOTED_FOR = "none";
-
-//        JSONObject initEntry = new JSONObject();
-//        initEntry.put("init",0);
-//        LogEntry init = new LogEntry(0, new Entry(initEntry));
-//        log.addInitLogEntry(init);
 
         String leaderStatus =  config.getProperty("leader");
         if (leaderStatus.equalsIgnoreCase("on")) {
             logger.debug(System.lineSeparator() + "Leader Started");
             LEADER = true;
+            CANDIDATE = false;
+            FOLLOWER = false;
             MAJORITY = 0;
             LogData.TERM = 1;
             Member leader = new Member(config.getProperty("leaderhost"), config.getProperty("leaderport"), true, 0);
@@ -94,27 +92,33 @@ public class Membership {
             LogEntry init = new LogEntry(0, new Entry(initEntry));
             log.addInitLogEntry(init);
             LogData.COMMIT_INDEX = 0;
-            //initSendingReplicaChannel();
+
+            Random random = new Random();
+            int r = (random.nextInt(15) + 8);
+            ELECTION_PERIOD = r*1000;
 
             Timer timer = new Timer("Timer");
-            long delay  = 10000L;
-            long period = 10000L;
+            long delay  = 8000L;
+            long period = 8000L;
             timer.scheduleAtFixedRate(new HeartBeatTimeTask(), delay, period);
 
         } else {
             logger.debug(System.lineSeparator() + "Raft Instance Started at " + SELF_HOST + ":" + SELF_PORT );
             LEADER = false;
+            FOLLOWER = true;
+            CANDIDATE = false;
             LogData.COMMIT_INDEX = 0;
             ArrayList<Member> membersFromLeader = register();
             members.addAll(membersFromLeader);
             printMemberList();
             logger.debug("Members received");
+            setMajority();
             LogData.INDEX = -1;
             log.loadRaftLogBackup();
             replicationThreadPool.submit(RPCServlet.receiverWorker);
-            //Timer election_timer = new Timer("Timer");
-            //long election_delay  = 12000L;
-            //long election_period = 20000L;
+            Random random = new Random();
+            int r = (random.nextInt(15) + 8);
+            ELECTION_PERIOD = r*1000;
             ELECTION_TIMER.scheduleAtFixedRate(new ElectionTimerTask(), ELECTION_DELAY, ELECTION_PERIOD);
         }
     }
@@ -163,7 +167,6 @@ public class Membership {
             setPostRequestProperties(conn);
             OutputStreamWriter out = new OutputStreamWriter(conn.getOutputStream());
             JSONObject newInstanceConfig = createJsonWithOwnConfig();
-            //System.out.println(newInstanceConfig.toString());
             out.write(newInstanceConfig.toString());
             out.flush();
             out.close();
@@ -455,9 +458,10 @@ public class Membership {
         IN_ELECTION = true;
         LogData.TERM ++;
         CANDIDATE = true;
+        FOLLOWER = false;
         VOTED_FOR = SELF_HOST+":"+SELF_PORT;
+        ALREADY_VOTED = true;
         resetElectionTimer();
-        //VOTES_RECEIVED ++;
         sendRequestVotesRPCS(buildRequestVoteBody());
 
     }
@@ -475,18 +479,19 @@ public class Membership {
             }
             try {
                 latch.await(10, TimeUnit.SECONDS);
-                //logger.debug("Latch woke up + " + latch.getCount());
                 if (latch.getCount() == 0){
-                    logger.debug("Votes of majority received");
                     ELECTION_TIMER.cancel();
                     LEADER = true;
                     CANDIDATE = false;
                     IN_ELECTION = false;
                     VOTED_FOR = "none";
+                    ALREADY_VOTED = false;
                     updateLeaderInMembership();
                     Timer timer = new Timer("Timer");
-                    long delay  = 10000L;
-                    long period = 10000L;
+                    long delay  = 8000L;
+                    long period = 8000L;
+                    logger.debug("I won the election");
+                    logger.debug("Sending Heartbeats");
                     timer.scheduleAtFixedRate(new HeartBeatTimeTask(), delay, period);
                 } else {
                     logger.debug("Not enough votes received");
@@ -496,7 +501,9 @@ public class Membership {
             }
         }
     }
-
+    /**
+     * Method that updates the new elected leader
+     */
     private void updateLeaderInMembership() {
         synchronized (members) {
             for (Member m : members) {
@@ -507,7 +514,6 @@ public class Membership {
     }
 
     private JSONObject buildRequestVoteBody(){
-        logger.debug("Building request vote body");
         JSONObject json = new JSONObject();
         json.put("term", LogData.TERM);
         json.put("candidateid", SELF_HOST+":"+SELF_PORT);
@@ -517,10 +523,26 @@ public class Membership {
         return json;
     }
 
+    /**
+     * Method that resets the election timer
+     */
+
     public void resetElectionTimer(){
         ELECTION_TIMER.cancel();
         ELECTION_TIMER = new Timer("Timer");
-        ELECTION_TIMER.scheduleAtFixedRate(new ElectionTimerTask(), ELECTION_DELAY, ELECTION_PERIOD);
+        ELECTION_TIMER.scheduleAtFixedRate(new ElectionTimerTask(), ELECTION_PERIOD, ELECTION_PERIOD);
+    }
+
+    /**
+     * Method returns a candidate to a follower state
+     */
+    public void goToFollowerState(){
+        logger.debug("Back to Follower State");
+        IN_ELECTION = false;
+        LogData.TERM --;
+        CANDIDATE = false;
+        FOLLOWER = true;
+        resetElectionTimer();
     }
 
     /**

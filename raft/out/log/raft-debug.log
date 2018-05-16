@@ -1145,3 +1145,29 @@ Leader Started
 Members List:
 [ localhost:8081, Leader: true ]
 
+
+Leader Started
+Members List:
+[ localhost:8081, Leader: true ]
+
+
+New localhost:8082
+Members sent
+
+appendentry/entry 
+{"oper":"add"}
+
+Log content:
+0 [ Term: 0, Entry: {"init":0} ]
+1 [ Term: 1, Entry: {"oper":"add"} ]
+
+
+Replication started
+Replication finished
+AppendEntry accepted by http://localhost:8082
+Majority has replied
+
+Leader Started
+Members List:
+[ localhost:8081, Leader: true ]
+

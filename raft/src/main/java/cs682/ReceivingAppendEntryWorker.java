@@ -57,6 +57,7 @@ public class ReceivingAppendEntryWorker implements Runnable{
                         logger.debug("term " + term);
                         logger.debug("entry " + appOperation.toString());
                         boolean checkSuccess = log.consistencyCheck(prevTerm, prevIndex, logEntryToAdd);
+                        System.out.println( "Result of check "+  checkSuccess);
                         if (checkSuccess){
                             incomingReplicatedEntry.getResponse().setStatus(HttpServletResponse.SC_OK);
                         } else {

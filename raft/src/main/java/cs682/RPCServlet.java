@@ -29,11 +29,6 @@ public class RPCServlet extends HttpServlet {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response){
         String pathInfo = request.getPathInfo();
-        System.out.println("In do get");
-//        if (pathInfo.equals("/entry")) {
-//            System.out.println("Heartbeat received");
-//            membership.resetElectionTimer();
-//        }
     }
 
     @Override
@@ -41,23 +36,31 @@ public class RPCServlet extends HttpServlet {
         String pathInfo = request.getPathInfo();
         String jsonContent = getRequestBody(request);
         JSONObject json = to_jsonObject(jsonContent);
-        System.out.println("in do post " + pathInfo );
         if (pathInfo.equals("/entry")) {
-            if (!json.containsKey("entry")){
-                System.out.println("Heartbeat received");
-                membership.resetElectionTimer();
-            } else {
-                System.out.println("contains entry "  );
-                if(Membership.LEADER){
-                    response.setStatus(HttpServletResponse.SC_OK);  /** The leader will get back to the app once the entry is committed */
-                    processAppAppendEntry(json);
+            if (!json.containsKey("entry")){ /** Heartbeat received */
+                if (Membership.CANDIDATE){
+                    int leaderterm = ((Long)json.get("term")).intValue();
+                    if (leaderterm >= LogData.TERM) {
+                        membership.goToFollowerState();
+                    } else {
+                        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    }
                 } else {
-                    processLeadersAppendEntry(jsonContent, response); /** Follower parses the jason and do the consistency check */
+                    logger.debug("Heartbeat received");
+                    membership.resetElectionTimer();
+                    response.setStatus(HttpServletResponse.SC_OK);
                 }
+            } else { /** Entry to be replicated received */
+                processLeadersAppendEntry(jsonContent, response); /** Follower parses the jason and do the consistency check */
             }
+        } else if (pathInfo.equals("/cliententry")) {
+            response.setStatus(HttpServletResponse.SC_OK);  /** The leader will get back to the app once the entry is committed */
+            processAppAppendEntry(json);
+
         } else if(pathInfo.equals("/vote")) {
-            System.out.println("Request of Vote Received");
-            if (Membership.VOTED_FOR.equals("none")){
+            logger.debug(System.lineSeparator() + "Request of vote received");
+            membership.resetElectionTimer();
+            if (!Membership.ALREADY_VOTED){
                 processRequestVote(json, response);
             } else {
                 logger.debug("Vote not granted. Server already voted for " + Membership.VOTED_FOR);
@@ -73,13 +76,8 @@ public class RPCServlet extends HttpServlet {
         log.add(logentry);
         boolean replicationSuccess = replicateEntry(logentry);
         if (replicationSuccess) {
-            //send commit to the app .. respond sending the commit
-            System.out.println("Entry can be committed...");
-            //sendCommittedEntrytoClient();
+            logger.debug("Entry can be committed..." + System.lineSeparator());
         }
-        //send append entries to all the followers
-        //should I change the end point ? send the term in a jason or put it in the path
-        //send in the json the log entry
     }
 
 
@@ -104,10 +102,8 @@ public class RPCServlet extends HttpServlet {
         boolean success = false;
         try {
             logger.debug("Replication started");
-            //logger.debug("Majority = " + Membership.MAJORITY);
             final CountDownLatch latch = new CountDownLatch(Membership.MAJORITY);
             logentry.setLatch(latch);
-            //logger.debug(" replica channel size " + sendingReplicaChannel.size());
             for (SendingReplicaWorker follower: sendingReplicaChannel) {
                 follower.queueLogEntry(logentry);
             }

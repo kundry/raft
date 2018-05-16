@@ -36,8 +36,7 @@ public class RequestVoteRPCWorker implements Runnable{
             switch (responseCode) {
                 case HttpServletResponse.SC_OK:
                     latch.countDown();
-                    logger.debug("voteGranted by " + url);
-                    //check if vote was granted
+                    logger.debug("voteGranted by: "+ System.lineSeparator() + url);
                     break;
                 case HttpServletResponse.SC_BAD_REQUEST:
                     break;
@@ -45,7 +44,8 @@ public class RequestVoteRPCWorker implements Runnable{
                     break;
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.debug("Could not request vote from: "+ System.lineSeparator() + url);
+
         }
     }
 

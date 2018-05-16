@@ -17,7 +17,6 @@ public class HeartBeatWorker implements Runnable {
 
     private String url;
     private Member member;
-    protected static final Membership membership = Membership.getInstance();
     protected static final LogData log = LogData.getInstance();
     final static Logger logger = Logger.getLogger(HeartBeatWorker.class);
 
@@ -32,27 +31,26 @@ public class HeartBeatWorker implements Runnable {
     @Override
     public void run() {
         try {
-            System.out.println("In HeartBeatWorker " + url);
             URL urlObj = new URL(url);
             HttpURLConnection conn  = (HttpURLConnection) urlObj.openConnection();
-            //conn.setDoInput(true);
-            //conn.setRequestMethod("GET");
             setPostRequestProperties(conn);
             OutputStreamWriter out = new OutputStreamWriter(conn.getOutputStream());
             JSONObject heartbeatBody = log.buildHeartBeatBody();
             out.write(heartbeatBody.toString());
             out.flush();
             out.close();
-
             int responseCode = conn.getResponseCode();
             switch (responseCode) {
                 case HttpServletResponse.SC_OK:
+                    break;
+                case HttpServletResponse.SC_BAD_REQUEST:
+                    logger.debug("Heartbeat rejected");
                     break;
                 default:
                     break;
             }
         } catch (IOException e) {
-            logger.debug("Follower Down");
+            logger.debug("Heartbeat did not reach follower");
         }
     }
 

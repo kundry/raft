@@ -18,10 +18,8 @@ public class RestoringLogWorker implements Runnable {
     final static Logger logger = Logger.getLogger(RestoringLogWorker.class);
 
     public RestoringLogWorker(String hostAndPort, int index) {
-        //System.out.println("creating instance of restoring worker");
         this.hostAndPort = hostAndPort;
         this.next_index = index;
-        //this.behind = true;
     }
 
     public void decrementNextIndex(){
@@ -35,14 +33,6 @@ public class RestoringLogWorker implements Runnable {
     @Override
     public void run() {
         synchronized (this) {
-            //while (behind) {
-//                try {
-//                    System.out.println("decrementing index");
-//                    this.wait();
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-                //System.out.println("Notified");
                 LogEntry nextLogEntryToSend = log.getLogEntryByIndex(next_index);
                 String url = hostAndPort + "/appendentry/entry";
                 try {
@@ -73,18 +63,11 @@ public class RestoringLogWorker implements Runnable {
                         default:
                             break;
                     }
-//                    try {
-//                        System.out.println("decrementing index");
-//                        this.wait();
-//                    } catch (InterruptedException e) {
-//                        e.printStackTrace();
-//                    }
 
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
-        //}
     }
 
     /** Method that sets the properties of a post request

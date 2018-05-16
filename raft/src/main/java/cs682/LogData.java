@@ -75,7 +75,6 @@ public class LogData {
         array.add(logentry.getEntry().getOperationData());
         json.put("entry", array);
         jsonLog.add(json);
-        //logger.debug(jsonLog.toString());
         lock.unlock();
     }
 
@@ -101,10 +100,6 @@ public class LogData {
      * sent to the followers
      */
     public String wrap(LogEntry logentry){
-        //System.out.println("In wrap");
-        //System.out.println("term " + logentry.getTerm());
-        //System.out.println("entry " + logentry.getEntry().getOperationData().toString());
-
         JSONObject wrappedJson = new JSONObject();
         int prevTerm = getPrevTerm();
         int prevIndex = getPrevIndex();
@@ -114,12 +109,6 @@ public class LogData {
         JSONArray array = new JSONArray();
         array.add(logentry.getEntry().getOperationData());
         wrappedJson.put("entry", array);
-
-        //logger.debug("Wrapped LogEntry: ");
-        //logger.debug("prevTerm " + prevTerm );
-        //logger.debug("prevIndex " + prevIndex );
-        //logger.debug("term " + TERM );
-        //logger.debug("entry " + array.toString() );
         return wrappedJson.toString();
     }
 
@@ -166,39 +155,17 @@ public class LogData {
         return lastIndex;
     }
 
-    public boolean consistencyCheck(int leaderPrevTerm, int leaderPrevIndex, LogEntry logEntryToAdd){
-//        System.out.println("My Index " + INDEX);
-//        System.out.println("Leader Index " + leaderPrevIndex);
-//        System.out.println("My Term " + getLastLogEntryTerm());
-//        System.out.println("Leader Term " + leaderPrevTerm);
-        LogEntry logentry = log.get(leaderPrevIndex);
-        if (logentry != null){
-            if (leaderPrevTerm == logentry.getTerm()) {
-                logger.debug("AppendEntry accepted");
-                add(logEntryToAdd);
-                return true;
-            } else {
-                logger.debug("AppendEntry rejected");
-                for(int i=leaderPrevIndex; i< log.size(); i++) {
-                    log.remove(i);
-                }
-                return false;
-            }
+    public boolean consistencyCheck(int leaderPrevTerm, int leaderPrevIndex, LogEntry logEntryToAdd) {
+        if ((leaderPrevIndex == INDEX) && (leaderPrevTerm == getLastLogEntryTerm())) {
+            logger.debug("AppendEntry accepted");
+            add(logEntryToAdd);
+            return true;
         } else {
-            logger.debug("AppendEntry rejected"); /* Follower log is behind */
+            logger.debug("AppendEntry rejected");
             return false;
         }
-
-//        if ((leaderPrevIndex == INDEX) && (leaderPrevTerm == getLastLogEntryTerm())) {
-//            logger.debug("AppendEntry accepted");
-//            add(logEntryToAdd);
-//            return true;
-//        } else {
-//            logger.debug("AppendEntry rejected");
-//            //delete
-//            return false;
-//        }
     }
+
 
     public void printLog(){
         synchronized (log) {
@@ -244,10 +211,7 @@ public class LogData {
     }
 
     public String wrapOldLogEntry(LogEntry logentry, int index){
-        //System.out.println("In wrap");
-        //System.out.println("term " + logentry.getTerm());
-        //System.out.println("entry " + logentry.getEntry().getOperationData().toString());
-
+        lock.lock();
         JSONObject wrappedJson = new JSONObject();
         int prevTerm = getPrevTerm(index);
         int prevIndex = index-1;
@@ -259,11 +223,8 @@ public class LogData {
         wrappedJson.put("entry", array);
 
         logger.debug("Preparing Previous LogEntry: ");
-        //logger.debug("prevTerm " + prevTerm );
-        //logger.debug("prevIndex " + prevIndex );
-        //logger.debug("term " + TERM );
-        //logger.debug("entry " + array.toString() );
         logger.debug(wrappedJson.toString());
+        lock.unlock();
         return wrappedJson.toString();
     }
 
@@ -294,6 +255,4 @@ public class LogData {
         lock.unlock();
         return json;
     }
-
-
 }

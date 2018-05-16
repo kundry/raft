@@ -3,8 +3,8 @@ package cs682;
 import javax.servlet.http.HttpServletResponse;
 
 public class ReplicatedLogEntry {
-    String LogEntryContent;
-    HttpServletResponse response;
+    private String LogEntryContent;
+    private HttpServletResponse response;
 
     public ReplicatedLogEntry( String logEntryContent, HttpServletResponse response){
         this.LogEntryContent = logEntryContent;
