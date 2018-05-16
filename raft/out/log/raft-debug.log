@@ -1023,3 +1023,125 @@ Leader Started
 Members List:
 [ localhost:8081, Leader: true ]
 
+
+Leader Started
+Members List:
+[ localhost:8081, Leader: true ]
+
+
+Leader Started
+Members List:
+[ localhost:8081, Leader: true ]
+
+
+Leader Started
+Members List:
+[ localhost:8081, Leader: true ]
+
+
+New localhost:8082
+Members sent
+
+Leader Started
+Members List:
+[ localhost:8081, Leader: true ]
+
+In election
+Building request vote body
+Sending request votes
+Votes of majority received
+
+Leader Started
+Members List:
+[ localhost:8081, Leader: true ]
+
+
+New localhost:8082
+Members sent
+
+Leader Started
+Members List:
+[ localhost:8081, Leader: true ]
+
+
+New localhost:8082
+Members sent
+
+Leader Started
+Members List:
+[ localhost:8081, Leader: true ]
+
+
+New localhost:8082
+Members sent
+Follower Down
+
+Leader Started
+Members List:
+[ localhost:8081, Leader: true ]
+
+
+New localhost:8082
+Members sent
+Follower Down
+
+Leader Started
+Members List:
+[ localhost:8081, Leader: true ]
+
+
+New localhost:8082
+Members sent
+
+Leader Started
+Members List:
+[ localhost:8081, Leader: true ]
+
+
+New localhost:8082
+Members sent
+Follower Down
+
+Leader Started
+Members List:
+[ localhost:8081, Leader: true ]
+
+
+New localhost:8082
+Members sent
+Follower Down
+
+Leader Started
+Members List:
+[ localhost:8081, Leader: true ]
+
+
+New localhost:8082
+Members sent
+
+Leader Started
+Members List:
+[ localhost:8081, Leader: true ]
+
+
+New localhost:8082
+Members sent
+Follower Down
+
+Leader Started
+Members List:
+[ localhost:8081, Leader: true ]
+
+
+New localhost:8082
+Members sent
+
+Leader Started
+Members List:
+[ localhost:8081, Leader: true ]
+
+
+Leader Started
+Members List:
+[ localhost:8081, Leader: true ]
+

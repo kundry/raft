@@ -18,9 +18,11 @@ public class HeartBeatTimeTask extends TimerTask{
 
     @Override
     public void run() {
+        System.out.println("In HeartBeatTimeTask");
         ArrayList<Member> memberList = membership.getMembers();
         for (Member member : memberList){
             if(!member.getIsLeader()){
+                System.out.println("In if of HeartBeatTimeTask");
                 heartbeatThreadPool.submit(new HeartBeatWorker(member));
             }
         }

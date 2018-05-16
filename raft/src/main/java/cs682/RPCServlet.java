@@ -15,14 +15,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.Timer;
 import java.util.concurrent.CountDownLatch;
 
 
 public class RPCServlet extends HttpServlet {
     protected static final LogData log = LogData.getInstance();
-    //protected static final Membership membership = Membership.getInstance();
+    protected static final Membership membership = Membership.getInstance();
     private static List<SendingReplicaWorker> sendingReplicaChannel = new ArrayList<>();
     public static final ReceivingAppendEntryWorker receiverWorker = new ReceivingAppendEntryWorker();
     final static Logger logger = Logger.getLogger(RPCServlet.class);
@@ -30,25 +29,38 @@ public class RPCServlet extends HttpServlet {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response){
         String pathInfo = request.getPathInfo();
-        if (pathInfo.equals("/entry")) {
-            System.out.println("Heartbeat received");
-            Membership.ELECTION_TIMER.cancel();
-            Membership.ELECTION_TIMER = new Timer("Timer");
-            Membership.ELECTION_TIMER.scheduleAtFixedRate(new ElectionTimerTask(), Membership.ELECTION_DELAY, Membership.ELECTION_PERIOD);
-        }
+        System.out.println("In do get");
+//        if (pathInfo.equals("/entry")) {
+//            System.out.println("Heartbeat received");
+//            membership.resetElectionTimer();
+//        }
     }
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response){
         String pathInfo = request.getPathInfo();
+        String jsonContent = getRequestBody(request);
+        JSONObject json = to_jsonObject(jsonContent);
+        System.out.println("in do post " + pathInfo );
         if (pathInfo.equals("/entry")) {
-            String jsonContent = getRequestBody(request);
-            JSONObject json = to_jsonObject(jsonContent);
-            if(Membership.LEADER){
-                response.setStatus(HttpServletResponse.SC_OK);  /** The leader will get back to the app once the entry is committed */
-                processAppAppendEntry(json);
+            if (!json.containsKey("entry")){
+                System.out.println("Heartbeat received");
+                membership.resetElectionTimer();
             } else {
-                processLeadersAppendEntry(jsonContent, response); /** Follower parses the jason and do the consistency check */
+                System.out.println("contains entry "  );
+                if(Membership.LEADER){
+                    response.setStatus(HttpServletResponse.SC_OK);  /** The leader will get back to the app once the entry is committed */
+                    processAppAppendEntry(json);
+                } else {
+                    processLeadersAppendEntry(jsonContent, response); /** Follower parses the jason and do the consistency check */
+                }
+            }
+        } else if(pathInfo.equals("/vote")) {
+            System.out.println("Request of Vote Received");
+            if (Membership.VOTED_FOR.equals("none")){
+                processRequestVote(json, response);
+            } else {
+                logger.debug("Vote not granted. Server already voted for " + Membership.VOTED_FOR);
             }
         }
     }
@@ -63,6 +75,7 @@ public class RPCServlet extends HttpServlet {
         if (replicationSuccess) {
             //send commit to the app .. respond sending the commit
             System.out.println("Entry can be committed...");
+            //sendCommittedEntrytoClient();
         }
         //send append entries to all the followers
         //should I change the end point ? send the term in a jason or put it in the path
@@ -106,6 +119,39 @@ public class RPCServlet extends HttpServlet {
             e.printStackTrace();
         }
         return success;
+    }
+
+    private void processRequestVote(JSONObject json, HttpServletResponse response){
+        boolean myLogIsAhead = false;
+        int term = ((Long)json.get("term")).intValue();
+        String cadidateId = (String)json.get("candidateId");
+        int candidateLastLogIndex = ((Long)json.get("lastlogindex")).intValue();
+        int candidateLastLogTerm = ((Long)json.get("lastlogterm")).intValue();
+
+        myLogIsAhead = isMyLogMoreUpToDate(candidateLastLogIndex, candidateLastLogTerm);
+        if (!myLogIsAhead) {
+            /** An status code OK it is replied when the vote is granted.*/
+            response.setStatus(HttpServletResponse.SC_OK);
+            Membership.VOTED_FOR = cadidateId;
+        } else {
+            /** A Bad Request is sent when the vote can not be granted. The term is not returning because according
+             * to my implementation once the leader starts receiving append entries that are ahead he will be able
+             * to reply that that append entry is not the expected and he will be able to catch up with the leader's log*/
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        }
+    }
+
+    private boolean isMyLogMoreUpToDate(int candidateLastLogIndex, int candidateLastLogTerm) {
+        boolean myLogIsMoreUpToDate = false;
+        int myLastTerm = log.getLastLogEntryTerm();
+        int myLastIndex = log.getLastLogIndex();
+
+        if (myLastTerm != candidateLastLogTerm){
+            if (myLastTerm > candidateLastLogTerm) myLogIsMoreUpToDate = true;
+        } else {
+            if (myLastIndex > candidateLastLogIndex) myLogIsMoreUpToDate = true;
+        }
+        return myLogIsMoreUpToDate;
     }
 
     /**

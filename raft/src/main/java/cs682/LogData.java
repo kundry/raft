@@ -23,9 +23,10 @@ public class LogData {
     private ReentrantLock lock;
     public static int TERM;
     public static int INDEX;
+    public static int COMMIT_INDEX;
     private JSONArray jsonLog;
     private static final String BACKUP_DIR = "out";
-    final static Logger logger = Logger.getLogger(Membership.class);
+    final static Logger logger = Logger.getLogger(LogData.class);
 
     /** Makes sure only one LogData is instantiated. */
     private static LogData singleton = new LogData();
@@ -155,19 +156,48 @@ public class LogData {
         return lastTerm;
     }
 
+    /**
+     * Method that returns the index of the last entry stored
+     * @return lastTerm
+     */
+    public int getLastLogIndex() {
+        int lastIndex;
+        lastIndex = log.size()-1;
+        return lastIndex;
+    }
+
     public boolean consistencyCheck(int leaderPrevTerm, int leaderPrevIndex, LogEntry logEntryToAdd){
 //        System.out.println("My Index " + INDEX);
 //        System.out.println("Leader Index " + leaderPrevIndex);
 //        System.out.println("My Term " + getLastLogEntryTerm());
 //        System.out.println("Leader Term " + leaderPrevTerm);
-        if ((leaderPrevIndex == INDEX) && (leaderPrevTerm == getLastLogEntryTerm())) {
-            logger.debug("AppendEntry accepted");
-            add(logEntryToAdd);
-            return true;
+        LogEntry logentry = log.get(leaderPrevIndex);
+        if (logentry != null){
+            if (leaderPrevTerm == logentry.getTerm()) {
+                logger.debug("AppendEntry accepted");
+                add(logEntryToAdd);
+                return true;
+            } else {
+                logger.debug("AppendEntry rejected");
+                for(int i=leaderPrevIndex; i< log.size(); i++) {
+                    log.remove(i);
+                }
+                return false;
+            }
         } else {
-            logger.debug("AppendEntry rejected");
+            logger.debug("AppendEntry rejected"); /* Follower log is behind */
             return false;
         }
+
+//        if ((leaderPrevIndex == INDEX) && (leaderPrevTerm == getLastLogEntryTerm())) {
+//            logger.debug("AppendEntry accepted");
+//            add(logEntryToAdd);
+//            return true;
+//        } else {
+//            logger.debug("AppendEntry rejected");
+//            //delete
+//            return false;
+//        }
     }
 
     public void printLog(){
@@ -248,6 +278,21 @@ public class LogData {
         prevTerm = log.get(index-1).getTerm();
         lock.unlock();
         return prevTerm;
+    }
+
+    /**
+     * Method that builds the body of the heartbeat and returns it as a JSONObject
+     * @return heartbeat body
+     */
+    public JSONObject buildHeartBeatBody(){
+        lock.lock();
+        JSONObject json = new JSONObject();
+        String leaderId = Membership.SELF_HOST+":"+Membership.SELF_HOST;
+        json.put("term", TERM);
+        json.put("leaderid", leaderId);
+        json.put("commitindex", COMMIT_INDEX);
+        lock.unlock();
+        return json;
     }
 
 

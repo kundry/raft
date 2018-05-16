@@ -10,5 +10,7 @@ public class ElectionTimerTask extends TimerTask {
     @Override
     public void run() {
         System.out.println("Election Timeout");
+        Membership m = Membership.getInstance();
+        m.election();
     }
 }
